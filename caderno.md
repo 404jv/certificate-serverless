@@ -19,3 +19,69 @@ Após isso, feche e abra o bash. E rode o comando abaixo para criar o projeto co
 ```bash
 $ serverless create --template aws-nodejs-typescript --path ignitecertificate
 ```
+
+> 💡 Pergunta: Qual o passo a passo para criar uma function?
+
+Responda aqui
+
+Podemos criar um arquivo com o nome da função, por exemplo, `hello.ts` e dentro do arquivo criamos a função hello, assim:
+
+```bash
+export const handle = async (event) => {
+
+}
+```
+
+Essa função recebe sempre um parâmetro `event` que é justamente o evento que fez essa função ser chamada, após isso podemos retornar um objeto com um `body` que vai ser o `json` retornado na API, passamos os `headers` para a configuração do tipo de retorno e um `statusCode` também. Ficando Assim:
+
+```bash
+export const handle = async (event) => {
+  return {
+    statusCode: 201,
+    body: JSON.stringify({
+      message: "Hello, world! With serverless",
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+}
+```
+
+Com a função configurada, abrimos o arquivo `serverless.yml` e criamos (se não existi) uma parte chamada functions, que vai ter uma chave chamada hello, assim:
+
+```yaml
+functions:
+  hello:
+```
+
+agora passamos todas as configs para essa função, como o local dela que é `src/functions/hello.handle` é importante colocar `hello.handle` mesmo que não seja o nome do arquivo, pois o `serverless` precisa sabe qual função de dentro do arquivo ele vai chamar:
+
+```yaml
+functions:
+  hello:
+    handler: src/functions/hello.handle
+```
+
+Agora criamos uma chave dentro do `hello` chamada `events`, e outra chamada `http` ficando assim:
+
+```yaml
+functions:
+  hello:
+    handler: src/functions/hello.handle
+    events:
+      - http:
+```
+
+dentro de http passamos uma chave com o `path` que é a rota, no caso pode ser `/hello` e outra chave com o `method` que vai ser `GET` e por fim, passamos uma chamada `cors` que recebe `true`. Ficando assim:
+
+```yaml
+functions:
+  hello:
+    handler: src/functions/hello.handle
+    events:
+      - http:
+          path: /hello
+          method: GET
+          cors: true
+```

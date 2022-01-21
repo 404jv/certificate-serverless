@@ -9,3 +9,5 @@ jspm_packages
 .esbuild
 
 .webpack
+
+.dynamodb

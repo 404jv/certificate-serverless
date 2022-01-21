@@ -85,3 +85,19 @@ functions:
           method: GET
           cors: true
 ```
+
+> 💡 Pergunta: Qual o comando para salvar as credenciais da AWS dentro do serverless? 
+
+Responda aqui
+
+o comando é:
+
+```bash
+$ serveless config credentials --provider aws --key=KEY --secret SECRET
+```
+
+> 💡 Pergunta: O que é o DynamoDB? Explique com o máximo de detalhes, irá te ajudar a entender e fixar o conhecimento ;)
+
+Responda aqui
+
+`DynamoDB` é um banco `NoSQL` isso é, um banco não relacional. O lado bom é que possui uma velocidade maior do que outros bancos relacionais, possui grandes vantagens em se trabalhar com esse banco na amazon, como: gerenciamento de segurança, backups, baixa latência e outras vantagens que são garantidas e feitas automaticamente pala Amazon. Alguns contras é que em casos de precisar de uma banco com dados mais complexos, o DynamoDB por ser um banco não relacional vai ser ruim.

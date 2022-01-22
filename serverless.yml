@@ -1,18 +1,26 @@
-service:
-  name: "ignitecertificate"
+service: "ignitecertificate"
 
 plugins:
   - serverless-offline
   - serverless-webpack
+  - serverless-dynamodb-local
 
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  dynamodb:
+    stages:
+      - dev
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   region: sa-east-1
 
 functions:
@@ -30,9 +38,12 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: users_certificates
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
         AttributeDefinitions:
           - AttributeName: id
-            AttributeType: s
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH

@@ -101,3 +101,68 @@ $ serveless config credentials --provider aws --key=KEY --secret SECRET
 Responda aqui
 
 `DynamoDB` é um banco `NoSQL` isso é, um banco não relacional. O lado bom é que possui uma velocidade maior do que outros bancos relacionais, possui grandes vantagens em se trabalhar com esse banco na amazon, como: gerenciamento de segurança, backups, baixa latência e outras vantagens que são garantidas e feitas automaticamente pala Amazon. Alguns contras é que em casos de precisar de uma banco com dados mais complexos, o DynamoDB por ser um banco não relacional vai ser ruim.
+
+> 💡 Pergunta: Como podemos utilizar o DynamoDB localmente? Quais as configurações necessárias para isso?
+
+<aside>
+🆘 Para executar o DynamoDB localmente é preciso ter o Java Runtime Engine (JRE) na versão 6.x ou superior.
+
+</aside>
+
+Responda Aqui
+
+Primeiro instale o `serverless-dynamodb-local` com yarn ou `npm`.  E instalar o dynamoDb:
+
+```yaml
+$ serverless dynamodb install
+```
+
+Após isso, no plugins do arquivo `severless.yml` adicionamos o `serverless-dynamodb-local` ficando assim:
+
+```yaml
+plugins:
+  - serverless-offline
+  - serverless-webpack
+  - serverless-dynamodb-local
+```
+
+Feito isso podemos declarar as tabelas na seção de `Resources` que fica dentro de `resource` um exemplo de tabela é:
+
+```yaml
+resources:
+  Resources:
+    dbCertificateUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: users_certificates
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+```
+
+Uma configuração importante para criar a tabela automaticamente, declarar a porta e também dizer que o banco rodara em local e desenvolvimento:
+
+```yaml
+custom:
+	...
+  dynamodb:
+    stages:
+      - dev
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+```
+
+Por fim, rodamos o comando que vai inciar o DynamoDB e rodar as tabelas:
+
+```yaml
+$ serverless dynamodb start
+```

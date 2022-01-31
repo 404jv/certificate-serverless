@@ -24,6 +24,11 @@ provider:
   region: sa-east-1
   lambdaHashingVersion: "20201221"
 
+package:
+  individually: false
+  include:
+    - "./src/templates/**"
+
 functions:
   generateCertificate:
     handler: src/functions/generateCertificate.handle

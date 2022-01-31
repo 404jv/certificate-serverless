@@ -166,3 +166,69 @@ Por fim, rodamos o comando que vai inciar o DynamoDB e rodar as tabelas:
 ```yaml
 $ serverless dynamodb start
 ```
+
+> 💡 Pergunta: O que a lib [puppeteer](https://github.com/puppeteer/puppeteer) faz?
+> 💡Pergunta: Quais os passos para gerar um PDF utilizando o pupeeter? (Exemplifique com código se achar necessário)
+
+Responda aqui
+
+Essa lib é usada para gerar PDF. 
+
+Primeiro fazemos um objeto Browser, passando algumas configurações:
+
+```tsx
+const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+});
+```
+
+com esse objeto pronto, criamos uma nova página:
+
+```tsx
+const page = await browser.newPage()
+```
+
+essa página é uma aba, então  podemos preenche-lá com o conteúdo. Mas antes, podemos usar o método `pdf` do objeto page, passando um objeto de configurações dentro do método, assim:
+
+```tsx
+const certificate = await page.pdf({
+    format: 'a4',
+    landscape: true,
+    printBackground: true,
+    preferCSSPageSize: true,
+    path: process.env.IS_OFFLINE ? './certificate.pdf' : null
+});
+```
+
+> 💡 Pergunta: Como fazemos o envio do certificado para um bucket no S3? (Exemplifique com código se achar necessário)
+
+
+Responda aqui
+
+Importamos a classe `S3` da `aws-sdk` assim:
+
+```tsx
+import { S3 } from "aws-sdk";
+```
+
+Agora, instanciamos essa classe:
+
+```tsx
+const s3 = new S3();
+```
+
+Podemos usar o método `putObject` desse objeto, passando o nome do Bucket, nome do arquivo, tipo de conexão (ACL) no caso vai ser `public-read`, além disso, passamos o body, e o tipo de arquivo. Ficando assim:
+
+```tsx
+await s3
+    .putObject({
+      Bucket: "serverlesscertificatesignite",
+      Key: `${id}.pdf`,
+      ACL: "public-read",
+      Body: pdf,
+      ContentType: "application/pdf",
+    })
+	  .promise();
+```

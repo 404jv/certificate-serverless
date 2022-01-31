@@ -15,3 +15,6 @@ jspm_packages
 .env
 
 *.pdf
+
+tmp/certificates/*
+!tmp/certificates/.gitkeep

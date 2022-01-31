@@ -232,3 +232,33 @@ await s3
     })
 	  .promise();
 ```
+
+> 💡 Sugestão: Explique, com código, como fazemos uma busca no DynamoDB.
+
+Responda aqui
+
+Importamos o document do DynamoDB client:
+
+```tsx
+import { document } from '../utils/dynamodbClient';
+```
+
+Usamos o método `query` desse objeto. Passando como parâmetro um objeto contendo `TableName`, `KeyConditionExpression` que no caso é condição `id = :id` , e por fim, `ExpressionAttributeValues` que recebe um objetos contendo o parâmetro e o valor do mesmo, no caso temos só um parâmetro que foi o `:id`, e o valor desse vai ser o id vindo da URL. Tudo isso fica assim:
+
+```tsx
+const response = await document
+    .query({
+      TableName: 'users_certificates',
+      KeyConditionExpression: 'id = :id',
+      ExpressionAttributeValues: {
+        ':id': id
+      },
+    })
+    .promise();
+```
+
+O retorno vai ter um array chamado `Items` como essa busca só foi por um usuário, então apenas a posição 0 é importante. Podemos colocar esse resultado em uma constante:
+
+```tsx
+const userCertificate = response.Items[0];
+```

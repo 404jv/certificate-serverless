@@ -3,6 +3,7 @@
 <p align="center"> 
     <img src="./public/certificate.jpg"/>
 </p>
+
 ## ✨ Tecnologias
 
 Esse projeto foi desenvolvido com as seguintes tecnologias:

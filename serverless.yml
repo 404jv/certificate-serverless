@@ -33,6 +33,14 @@ functions:
           method: POST
           cors: true
 
+  verifyCertificate:
+    handler: src/functions/verifyCertificate.handle
+    events:
+      - http:
+          path: /verifyCertificate/{id}
+          method: GET
+          cors: true
+
 resources:
   Resources:
     dbCertificateUsers:

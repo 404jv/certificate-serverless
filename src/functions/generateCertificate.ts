@@ -19,11 +19,11 @@ interface ITemplate {
   medal: string;
 }
 
-const compileTemplate = async function(data: ITemplate) {
+const compileTemplate = async function (data: ITemplate) {
   const filePath = path.join(
-    process.cwd(), 
-    'src', 
-    'templates', 
+    process.cwd(),
+    'src',
+    'templates',
     'certificate.hbs'
   );
 
@@ -35,14 +35,21 @@ const compileTemplate = async function(data: ITemplate) {
 export const handle = async (event) => {
   const { id, name, grade } = JSON.parse(event.body) as ICreateCertificate;
 
-  await document.put({
-    TableName: 'users_certificates',
-    Item: {
-      id,
-      name,
-      grade
-    }
-  }).promise();
+  const response = await document
+    .query({
+      TableName: 'users_certificates',
+      KeyConditionExpression: 'id = :id',
+      ExpressionAttributeValues: {
+        ':id': id,
+      },
+    })
+    .promise();
+
+  const userAlreadyExists = response.Items[0];
+
+  if (!userAlreadyExists) {
+    await createUser({ id, name, grade });
+  }
 
   const medalPath = path.join(process.cwd(), 'src', 'templates', 'selo.png');
   const medal = fs.readFileSync(medalPath, 'base64');
@@ -67,12 +74,12 @@ export const handle = async (event) => {
 
   await page.setContent(content);
 
-  const certificate = await page.pdf({
+  await page.pdf({
     format: 'a4',
     landscape: true,
     printBackground: true,
     preferCSSPageSize: true,
-    path: process.env.IS_OFFLINE ? './certificate.pdf' : null
+    path: process.env.IS_OFFLINE ? `./tmp/certificates/${id}.pdf` : null
   });
 
   await browser.close();
@@ -80,10 +87,22 @@ export const handle = async (event) => {
   return {
     statusCode: 201,
     body: JSON.stringify({
-      message: 'Certificate created!'
+      message: 'Certificate created!',
     }),
     headers: {
-      "Content-type": "application/json" 
+      "Content-type": "application/json"
     }
   }
+}
+
+
+async function createUser({ grade, id, name }: ICreateCertificate) {
+  await document.put({
+    TableName: 'users_certificates',
+    Item: {
+      id,
+      name,
+      grade
+    }
+  }).promise();
 }

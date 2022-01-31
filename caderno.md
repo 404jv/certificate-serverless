@@ -262,3 +262,22 @@ O retorno vai ter um array chamado `Items` como essa busca só foi por um usuár
 ```tsx
 const userCertificate = response.Items[0];
 ```
+
+> 💡 Sugestão: Documente, para futuras consultas, as configurações finais para realizar o deploy da aplicação.
+
+Responda aqui
+
+Adicionamos isso no `serverless.yml`:
+
+```yaml
+package:
+  individually: false
+  include:
+    - "./src/templates/**"
+```
+
+E roda o comando:
+
+```bash
+$ yarn deploy
+```
